@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+    <script src="profile.js" defer></script>
+</head>
+<body>
+    <h1>Profile</h1>
+
+    <div>
+        <label>First Name: <input type="text" id="first-name" /></label>
+        <button onclick="updateProfile('first_name')">Change</button>
+    </div>
+    <div>
+        <label>Last Name: <input type="text" id="last-name" /></label>
+        <button onclick="updateProfile('last_name')">Change</button>
+    </div>
+    <div>
+        <label>Password: <input type="password" id="password" /></label>
+        <button onclick="updateProfile('password')">Change</button>
+    </div>
+    <div>
+        <label>Age: <input type="number" id="age" /></label>
+        <button onclick="updateProfile('age')">Change</button>
+    </div>
+    <div>
+        <label>Phone: <input type="text" id="phone" maxlength="10" /></label>
+        <button onclick="updateProfile('phone')">Change</button>
+    </div>
+
+    <div style="border: 1px solid #ccc; padding: 10px; margin-top: 20px;">
+        <h2>Favorite Dishes</h2>
+        <ul id="favorite-dishes"></ul>
+    </div>
+
+    <div style="border: 1px solid #ccc; padding: 10px; margin-top: 20px;">
+        <h2>Favorite Rides</h2>
+        <ul id="favorite-rides"></ul>
+    </div>
+</body>
+</html>
