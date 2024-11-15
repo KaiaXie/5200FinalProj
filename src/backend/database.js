@@ -1,11 +1,12 @@
+require('dotenv').config();
 const mysql = require('mysql2');
 
-// 创建数据库连接
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',       // 替换为您的数据库用户名
-    password: 'Gold0410!', // 替换为您的数据库密码
-    database: 'FinalProj'
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT || 3306,
 });
 
 // 连接到数据库
