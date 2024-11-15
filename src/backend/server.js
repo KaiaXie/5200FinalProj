@@ -1,22 +1,21 @@
+require('dotenv').config();
+
 const express = require('express');
 const mysql = require('mysql2');
 const path = require('path');
 const app = express();
 const port = 3000;
-const apiRoutes = require('./api'); // 导入 api.js
+const apiRoutes = require('./api');
 
-
-// 解析JSON
 app.use(express.json());
-app.use('/api', apiRoutes); // 挂载 API 路由
+app.use('/api', apiRoutes);
 
-
-// 数据库连接配置
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',      // 替换为您的数据库用户名
-    password: 'Gold0410!', // 替换为您的数据库密码
-    database: 'FinalProj'
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT || 3306,
 });
 
 db.connect((err) => {
