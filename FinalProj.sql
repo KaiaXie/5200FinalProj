@@ -3,106 +3,113 @@ CREATE DATABASE FinalProj;
 USE FinalProj;
 
 CREATE TABLE City (
-	city_id INT PRIMARY KEY,
-    name VARCHAR(32)
+    city_id INT PRIMARY KEY,
+    name VARCHAR(32) NOT NULL UNIQUE
 );
 
 CREATE TABLE Company (
-	company_id INT PRIMARY KEY,
-    name VARCHAR(32)
+    company_id INT PRIMARY KEY,
+    name VARCHAR(32) NOT NULL UNIQUE
 );
 
 CREATE TABLE Park (
-	park_id INT PRIMARY KEY,
-    name VARCHAR(32),
-    company_id int,
-    city_id INT,
+    park_id INT PRIMARY KEY,
+    name VARCHAR(32) NOT NULL,
+    company_id INT NOT NULL,
+    city_id INT NOT NULL,
     FOREIGN KEY (company_id) REFERENCES Company(company_id),
-    FOREIGN KEY (city_id) REFERENCES City(city_id)
+    FOREIGN KEY (city_id) REFERENCES City(city_id),
+    UNIQUE (name, city_id)
 );
 
 CREATE TABLE Event (
     event_id INT PRIMARY KEY,
-    name VARCHAR(64),
-    description VARCHAR(256),
-    start_date DATE,
-    end_date DATE,
-    park_id INT,
-    FOREIGN KEY (park_id) REFERENCES Park(park_id)
+    name VARCHAR(64) NOT NULL,
+    description VARCHAR(256) DEFAULT 'No description provided',
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    park_id INT NOT NULL,
+    FOREIGN KEY (park_id) REFERENCES Park(park_id),
+    CHECK (end_date >= start_date)
 );
 
 CREATE TABLE Restaurant (
-	restaurant_id INT PRIMARY KEY,
-    name VARCHAR(64),
-    type VARCHAR(64),
-    park_id INT,
-    FOREIGN KEY (park_id) REFERENCES Park(park_id)
+    restaurant_id INT PRIMARY KEY,
+    name VARCHAR(64) NOT NULL,
+    type VARCHAR(64) NOT NULL,
+    park_id INT NOT NULL,
+    FOREIGN KEY (park_id) REFERENCES Park(park_id),
+    UNIQUE (name, park_id)
 );
 
 CREATE TABLE Dish (
-	dish_id INT PRIMARY KEY,
-    name VARCHAR(64),
-    price INT,
-    description VARCHAR(256),
-    restaurant_id INT,
-    FOREIGN KEY (restaurant_id) REFERENCES Restaurant(restaurant_id)
+    dish_id INT PRIMARY KEY,
+    name VARCHAR(64) NOT NULL,
+    price INT NOT NULL CHECK (price >= 0),
+    description VARCHAR(256) DEFAULT 'No description provided',
+    restaurant_id INT NOT NULL,
+    FOREIGN KEY (restaurant_id) REFERENCES Restaurant(restaurant_id),
+    UNIQUE (name, restaurant_id)
 );
 
 CREATE TABLE Store (
-	store_id INT PRIMARY KEY,
-    name VARCHAR(64),
-    theme VARCHAR(64),
-    park_id INT,
-    FOREIGN KEY (park_id) REFERENCES Park(park_id)
+    store_id INT PRIMARY KEY,
+    name VARCHAR(64) NOT NULL,
+    theme VARCHAR(64) DEFAULT 'General',
+    park_id INT NOT NULL,
+    FOREIGN KEY (park_id) REFERENCES Park(park_id),
+    UNIQUE (name, park_id)
 );
 
 CREATE TABLE Souvenir (
-	souvenir_id INT PRIMARY KEY,
-    name VARCHAR(32),
-    price INT
+    souvenir_id INT PRIMARY KEY,
+    name VARCHAR(32) NOT NULL UNIQUE,
+    price INT NOT NULL CHECK (price >= 0)
 );
 
 CREATE TABLE store_sells_souvenir (
-	souvenir_id INT,
-    store_id INT,
+    souvenir_id INT NOT NULL,
+    store_id INT NOT NULL,
     PRIMARY KEY (souvenir_id, store_id),
-	FOREIGN KEY (souvenir_id) REFERENCES Souvenir(souvenir_id),
+    FOREIGN KEY (souvenir_id) REFERENCES Souvenir(souvenir_id),
     FOREIGN KEY (store_id) REFERENCES Store(store_id)
 );
 
 CREATE TABLE Ride (
-	ride_id INT PRIMARY KEY,
-    name VARCHAR(128),
-    type VARCHAR(128),
-    description VARCHAR(256),
-    park_id INT,
-    FOREIGN KEY (park_id) REFERENCES Park(park_id)
+    ride_id INT PRIMARY KEY,
+    name VARCHAR(128) NOT NULL,
+    type VARCHAR(128) NOT NULL,
+    description VARCHAR(256) DEFAULT 'No description provided',
+    park_id INT NOT NULL,
+    FOREIGN KEY (park_id) REFERENCES Park(park_id),
+    UNIQUE (name, park_id)
 );
 
 CREATE TABLE User (
-	user_id INT PRIMARY KEY,
-    password VARCHAR(256),
-    first_name VARCHAR(64),
-    last_name VARCHAR(64),
-    age INT,
-    phone CHAR(10)
+    user_id INT PRIMARY KEY,
+    password VARCHAR(256) NOT NULL,
+    first_name VARCHAR(64) NOT NULL,
+    last_name VARCHAR(64) NOT NULL,
+    age INT NOT NULL CHECK (age >= 0 AND age <= 120),
+    phone CHAR(10) NOT NULL UNIQUE
 );
 
 CREATE TABLE Ride_Favorites (
-	user_id INT,
-    ride_id INT,
+    user_id INT NOT NULL,
+    ride_id INT NOT NULL,
     PRIMARY KEY (user_id, ride_id),
-	FOREIGN KEY (user_id) REFERENCES User(user_id),
+    FOREIGN KEY (user_id) REFERENCES User(user_id),
     FOREIGN KEY (ride_id) REFERENCES Ride(ride_id)
 );
 
 CREATE TABLE Eat_Favorites (
-	user_id INT,
-    dish_id INT,
+    user_id INT NOT NULL,
+    dish_id INT NOT NULL,
     PRIMARY KEY (user_id, dish_id),
-	FOREIGN KEY (user_id) REFERENCES User(user_id),
+    FOREIGN KEY (user_id) REFERENCES User(user_id),
     FOREIGN KEY (dish_id) REFERENCES Dish(dish_id)
 );
+
 
 
 INSERT INTO City VALUES (1, 'Orlando'),

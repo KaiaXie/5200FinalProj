@@ -1,5 +1,6 @@
 USE FinalProj;
 
+
 DELIMITER //
 
 CREATE PROCEDURE user_login(IN first_name VARCHAR(64), IN last_name VARCHAR(64), IN pass VARCHAR(256), OUT uid INT)

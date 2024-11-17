@@ -23,7 +23,7 @@ async function loadRestaurantDetails() {
 document.addEventListener('DOMContentLoaded', loadRestaurantDetails);
 
 async function toggleFavoriteDish(dishId, event) {
-    const userId = sessionStorage.getItem('userId'); // 获取当前用户的 ID
+    const userId = sessionStorage.getItem('userId'); // Get current user id
     if (!userId) {
         alert("Please log in to favorite this dish.");
         return;
@@ -39,7 +39,7 @@ async function toggleFavoriteDish(dishId, event) {
     });
 
     if (response.ok) {
-        // 根据操作更新图标的状态
+        // Update icon status
         heartIcon.textContent = action === 'add' ? '❤️' : '♡';
     } else {
         console.error("Failed to toggle favorite dish");

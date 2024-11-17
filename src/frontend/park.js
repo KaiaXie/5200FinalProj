@@ -9,13 +9,13 @@ async function loadParkDetails() {
         const data = await response.json();
         const { park, restaurants, rides, stores, events } = data;
 
-        // 确保 park 数据存在
+        // Ensure there is park data
         if (!park) throw new Error("Park data not found");
 
-        // 设置标题
+        // Set park title
         document.getElementById('park-title').textContent = `${park.name} - ${park.company} - ${park.city}`;
 
-        // 填充每个列表
+        // print each list
         populateList('restaurant-list', restaurants, 'restaurant.html');
         populateList('ride-list', rides, 'ride.html');
         populateList('store-list', stores, 'store.html');

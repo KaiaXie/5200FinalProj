@@ -11,7 +11,7 @@ async function signIn() {
 
     const data = await response.json();
     if (data.success) {
-        sessionStorage.setItem('userId', data.userId); // 保存当前用户 ID
+        sessionStorage.setItem('userId', data.userId); // Store current user Id
         window.location.href = 'choose_park.html';
     } else {
         alert('Invalid credentials');

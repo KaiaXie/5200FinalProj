@@ -23,15 +23,15 @@ db.connect((err) => {
     console.log('Connected to MySQL');
 });
 
-// 提供静态文件服务
+// Serve static files
 app.use(express.static(path.join(__dirname, '../frontend')));
 
-// 将根路径重定向到 index.html
+// Redirect to index.html
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
-// 登录API
+// Login API
 app.post('/api/login', (req, res) => {
     const { first_name, last_name, password } = req.body;
     const query = 'CALL user_login(?, ?, ?, @uid); SELECT @uid AS user_id';
@@ -47,7 +47,7 @@ app.post('/api/login', (req, res) => {
     });
 });
 
-// 注册API
+// Signup API
 app.post('/api/signup', (req, res) => {
     const { first_name, last_name, password } = req.body;
     const query = 'CALL user_signup(?, ?, ?, @uid); SELECT @uid AS user_id';
@@ -58,7 +58,7 @@ app.post('/api/signup', (req, res) => {
     });
 });
 
-// 更新用户信息API
+// Update user information API
 app.post('/api/updateProfile', (req, res) => {
     const { userId, fieldName, newValue } = req.body;
     const query = 'CALL update_user_info(?, ?, ?)';
@@ -69,7 +69,7 @@ app.post('/api/updateProfile', (req, res) => {
     });
 });
 
-// 收藏/取消收藏菜品API
+// Add/Remove favorite dish API
 app.post('/api/toggleFavoriteDish', (req, res) => {
     const { userId, dishId, action } = req.body;
     const query = action === 'add' ? 'CALL add_favorite_dish(?, ?)' : 'CALL remove_favorite_dish(?, ?)';
@@ -80,7 +80,7 @@ app.post('/api/toggleFavoriteDish', (req, res) => {
     });
 });
 
-// 收藏/取消收藏游乐设施API
+// Add/Remove favorite ride API
 app.post('/api/toggleFavoriteRide', (req, res) => {
     const { userId, rideId, action } = req.body;
     const query = action === 'add' ? 'CALL add_favorite_ride(?, ?)' : 'CALL remove_favorite_ride(?, ?)';

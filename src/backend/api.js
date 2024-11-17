@@ -1,19 +1,19 @@
 const express = require('express');
-const db = require('./database'); // 导入数据库连接
+const db = require('./database');
 const router = express.Router();
 
-// 登录API
+// Login API
 router.post('/login', (req, res) => {
     const { first_name, last_name, password } = req.body;
 
-    // 第一步：调用存储过程
+    // Call the procedure
     db.query('CALL user_login(?, ?, ?, @uid)', [first_name, last_name, password], (error) => {
         if (error) {
             console.error("Error executing query:", error);
             return res.status(500).send(error);
         }
 
-        // 第二步：获取输出变量 @uid 的值
+        // get the output variable @uid
         db.query('SELECT @uid AS user_id', (error, results) => {
             if (error) {
                 console.error("Error selecting @uid:", error);
@@ -30,7 +30,7 @@ router.post('/login', (req, res) => {
     });
 });
 
-// 注册API
+// Signup API
 router.post('/signup', (req, res) => {
     const { first_name, last_name, password } = req.body;
 
@@ -38,14 +38,13 @@ router.post('/signup', (req, res) => {
         return res.status(400).json({ message: "All fields are required" });
     }
 
-    // 第一步：调用存储过程，生成新用户
+    // Call the procedure for signing up new users
     db.query('CALL user_signup(?, ?, ?, @uid)', [first_name, last_name, password], (error) => {
         if (error) {
             console.error("Error executing signup query:", error);
             return res.status(500).json({ message: "Internal server error" });
         }
 
-        // 第二步：获取存储过程中的输出变量 @uid
         db.query('SELECT @uid AS user_id', (error, results) => {
             if (error) {
                 console.error("Error retrieving user ID:", error);
@@ -58,7 +57,7 @@ router.post('/signup', (req, res) => {
     });
 });
 
-// 获取所有公园列表
+// Get all parks
 router.get('/getParks', (req, res) => {
     const query = 'SELECT park_id, name FROM Park';
     db.query(query, (error, results) => {
@@ -67,7 +66,8 @@ router.get('/getParks', (req, res) => {
     });
 });
 
-// 获取公园详情
+
+// Get park details
 router.get('/getParkDetails', (req, res) => {
     const parkId = req.query.park_id;
 
@@ -91,27 +91,26 @@ router.get('/getParkDetails', (req, res) => {
             company: parkResults[0].company_name
         };
 
-        // 查询餐厅
+        // Query restaurants
         const restaurantQuery = `SELECT restaurant_id AS id, name FROM Restaurant WHERE park_id = ?`;
         db.query(restaurantQuery, [parkId], (error, restaurantResults) => {
             if (error) return res.status(500).send(error);
 
-            // 查询游乐设施
+            // Query rides
             const rideQuery = `SELECT ride_id AS id, name FROM Ride WHERE park_id = ?`;
             db.query(rideQuery, [parkId], (error, rideResults) => {
                 if (error) return res.status(500).send(error);
 
-                // 查询商店
+                // Query stores
                 const storeQuery = `SELECT store_id AS id, name FROM Store WHERE park_id = ?`;
                 db.query(storeQuery, [parkId], (error, storeResults) => {
                     if (error) return res.status(500).send(error);
 
-                    // 查询活动
+                    // Query events
                     const eventQuery = `SELECT event_id AS id, name FROM Event WHERE park_id = ?`;
                     db.query(eventQuery, [parkId], (error, eventResults) => {
                         if (error) return res.status(500).send(error);
 
-                        // 将所有结果组合成一个对象返回
                         res.json({
                             park,
                             restaurants: restaurantResults,
@@ -126,7 +125,7 @@ router.get('/getParkDetails', (req, res) => {
     });
 });
 
-// 获取餐厅详情及菜品信息
+// Get restaurant details and dish information
 router.get('/getRestaurantDetails', (req, res) => {
     const restaurantId = req.query.id;
     const userId = req.query.userId;
@@ -151,7 +150,7 @@ router.get('/getRestaurantDetails', (req, res) => {
     });
 });
 
-// 收藏或取消收藏菜品
+// Add or remove favorite dishes
 router.post('/toggleFavoriteDish', (req, res) => {
     const { userId, dishId, action } = req.body;
     const query = action === 'add' 
@@ -160,9 +159,9 @@ router.post('/toggleFavoriteDish', (req, res) => {
     
     db.query(query, [userId, dishId], (error) => {
         if (error) {
-            // 避免重复插入已存在的收藏项
+            // Avoid duplicate insertion of already existing favorites
             if (error.code === 'ER_DUP_ENTRY' && action === 'add') {
-                return res.json({ success: true }); // 如果已经收藏，返回成功
+                return res.json({ success: true });
             }
             return res.status(500).send(error);
         }
@@ -170,7 +169,7 @@ router.post('/toggleFavoriteDish', (req, res) => {
     });
 });
 
-// 获取游乐设施详情
+// Get ride details
 router.get('/getRideDetails', (req, res) => {
     const rideId = req.query.id;
     const userId = req.query.userId;
@@ -187,7 +186,7 @@ router.get('/getRideDetails', (req, res) => {
     });
 });
 
-// 收藏或取消收藏游乐设施
+// Add or remove favorite rides
 router.post('/toggleFavoriteRide', (req, res) => {
     const { userId, rideId, action } = req.body;
     const query = action === 'add' 
@@ -196,9 +195,9 @@ router.post('/toggleFavoriteRide', (req, res) => {
     
     db.query(query, [userId, rideId], (error) => {
         if (error) {
-            // 避免重复插入已存在的收藏项
+            // Avoid duplicate insertion of already existing favorites
             if (error.code === 'ER_DUP_ENTRY' && action === 'add') {
-                return res.json({ success: true }); // 如果已经收藏，返回成功
+                return res.json({ success: true });
             }
             return res.status(500).send(error);
         }
@@ -206,7 +205,7 @@ router.post('/toggleFavoriteRide', (req, res) => {
     });
 });
 
-// 获取商店详情及纪念品信息
+// Get store details
 router.get('/getStoreDetails', (req, res) => {
     const storeId = req.query.id;
     const query = `
@@ -229,7 +228,7 @@ router.get('/getStoreDetails', (req, res) => {
     });
 });
 
-// 获取活动详情
+// Get event details
 router.get('/getEventDetails', (req, res) => {
     const eventId = req.query.id;
     const query = 'SELECT name, description, start_date, end_date FROM Event WHERE event_id = ?';
@@ -246,7 +245,7 @@ router.get('/getEventDetails', (req, res) => {
     });
 });
 
-// 获取用户信息和收藏信息
+// Get user profile and favorites
 router.get('/getUserProfile', (req, res) => {
     const userId = req.query.id;
     
@@ -273,18 +272,18 @@ router.get('/getUserProfile', (req, res) => {
     db.query(profileQuery, [userId], (error, profileResults) => {
         if (error) return res.status(500).send(error);
 
-        // 检查用户是否存在
+        // Check if the user exists
         if (profileResults.length === 0) {
             return res.status(404).json({ message: "User not found" });
         }
 
         const profile = profileResults[0];
         
-        // 查询收藏菜品
+        // Query favorite dishes
         db.query(favoriteDishesQuery, [userId], (error, favoriteDishes) => {
             if (error) return res.status(500).send(error);
 
-            // 查询收藏游乐设施
+            // Query favorite rides
             db.query(favoriteRidesQuery, [userId], (error, favoriteRides) => {
                 if (error) return res.status(500).send(error);
 
@@ -302,7 +301,7 @@ router.get('/getUserProfile', (req, res) => {
     });
 });
 
-// 更新用户信息
+// Update user profile information
 router.post('/updateProfile', (req, res) => {
     const { userId, fieldName, newValue } = req.body;
     const query = `CALL update_user_info(?, ?, ?)`;

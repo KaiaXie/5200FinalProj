@@ -10,14 +10,14 @@ async function loadRideDetails() {
     document.getElementById('ride-type').textContent = type;
     document.getElementById('ride-description').textContent = description;
 
-    // 设置收藏图标状态
+    // Set icons for favorites
     const favoriteIcon = document.getElementById('favorite-icon');
     favoriteIcon.textContent = isFavorite ? '❤️' : '♡';
-    favoriteIcon.onclick = (event) => toggleFavoriteRide(rideId, event); // 绑定事件
+    favoriteIcon.onclick = (event) => toggleFavoriteRide(rideId, event);
 }
 
 async function toggleFavoriteRide(rideId, event) {
-    const userId = sessionStorage.getItem('userId'); // 获取当前用户 ID
+    const userId = sessionStorage.getItem('userId'); // Get current use id
     if (!userId) {
         alert("Please log in to favorite this ride.");
         return;
@@ -26,7 +26,7 @@ async function toggleFavoriteRide(rideId, event) {
     const heartIcon = event.target;
     const action = heartIcon.textContent === '♡' ? 'add' : 'remove';
 
-    console.log(`Toggling favorite for ride ID: ${rideId}, Action: ${action}`); // 日志输出调试
+    console.log(`Toggling favorite for ride ID: ${rideId}, Action: ${action}`);
 
     const response = await fetch('/api/toggleFavoriteRide', {
         method: 'POST',
@@ -35,15 +35,14 @@ async function toggleFavoriteRide(rideId, event) {
     });
 
     if (response.ok) {
-        // 根据操作更新图标状态
+        // update icon status
         heartIcon.textContent = action === 'add' ? '❤️' : '♡';
-        console.log(`Successfully toggled favorite for ride ID: ${rideId}`); // 成功操作日志
+        console.log(`Successfully toggled favorite for ride ID: ${rideId}`);
     } else {
         console.error("Failed to toggle favorite ride");
     }
 }
 
-// 将函数暴露到全局
 window.toggleFavoriteRide = toggleFavoriteRide;
 
 document.addEventListener('DOMContentLoaded', loadRideDetails);
