@@ -312,4 +312,25 @@ router.post('/updateProfile', (req, res) => {
     });
 });
 
+router.get('/getRestaurantByDish', (req, res) => {
+    const dishId = req.query.dish_id;
+
+    const query = `
+        SELECT restaurant_id 
+        FROM Dish 
+        WHERE dish_id = ?;
+    `;
+
+    db.query(query, [dishId], (err, results) => {
+        if (err) {
+            console.error('Error fetching restaurant ID:', err);
+            res.status(500).send('Internal server error');
+        } else if (results.length === 0) {
+            res.status(404).send('Dish not found');
+        } else {
+            res.json({ restaurantId: results[0].restaurant_id });
+        }
+    });
+});
+
 module.exports = router;
